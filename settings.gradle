@@ -1,0 +1,2 @@
+include ':app', ':run'
+include ':library'

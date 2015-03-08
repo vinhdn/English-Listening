@@ -1,0 +1,34 @@
+apply plugin: 'com.android.application'
+
+android {
+    signingConfigs {
+    }
+    compileSdkVersion 21
+    buildToolsVersion "21.1.2"
+    defaultConfig {
+        applicationId 'com.evnblue.englishlisteningaz'
+        minSdkVersion 10
+        targetSdkVersion 21
+        versionName '1.0'
+        versionCode 1
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.facebook.android:facebook-android-sdk:3.21.1'
+    compile 'com.google.android.gms:play-services:6.+'
+    compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'
+    compile files('libs/volley.jar')
+    compile files('libs/nineoldandroids-2.4.0.jar')
+    compile project(':library')
+}
