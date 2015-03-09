@@ -78,4 +78,39 @@ public class EffortlessApplication extends Application {
         mPref.edit().putString("lastplay", last).commit();
     }
 
+    public boolean getCurrentVerRun(){
+        int cur =  mPref.getInt("123dsfow2321s1",0);
+        if(!isShared()){
+            if(cur < 3)
+                cur = cur + 1;
+            else {
+                cur = 0;
+                setCurrentVerRun(cur);
+                return true;
+            }
+        }else{
+            if(cur < 5)
+                cur = cur + 1;
+            else {
+                cur = 0;
+                setCurrentVerRun(cur);
+                return true;
+            }
+        }
+        setCurrentVerRun(cur);
+        return false;
+    }
+
+    public void setCurrentVerRun(int num){
+        mPref.edit().putInt("123dsfow2321s1",num).commit();
+    }
+
+    public boolean isShared(){
+        return mPref.getBoolean("Adw2312",false);
+    }
+
+    public void setIsShare(boolean isShared){
+        mPref.edit().putBoolean("Adw2312",isShared).commit();
+    }
+
 }

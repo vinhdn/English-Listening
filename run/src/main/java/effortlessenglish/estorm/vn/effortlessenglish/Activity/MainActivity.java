@@ -1,5 +1,6 @@
 package effortlessenglish.estorm.vn.effortlessenglish.Activity;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -29,9 +30,11 @@ import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationA
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import effortlessenglish.estorm.vn.effortlessenglish.Base.BaseActivity;
 import effortlessenglish.estorm.vn.effortlessenglish.Dialogs.AboutDialogFragment;
+import effortlessenglish.estorm.vn.effortlessenglish.Dialogs.MyAlertDialogFragment;
 import effortlessenglish.estorm.vn.effortlessenglish.Models.Danhmuc;
 import effortlessenglish.estorm.vn.effortlessenglish.R;
 import effortlessenglish.estorm.vn.effortlessenglish.Services.PlayerService;
@@ -58,7 +61,7 @@ public class MainActivity extends BaseActivity implements GridView.OnItemClickLi
             public void onAdLoaded() {
                 super.onAdLoaded();
                 if(isFirst) {
-                    interstitialAd.show();
+                    //interstitialAd.show();
                     isFirst = false;
                 }
             }
@@ -105,6 +108,8 @@ public class MainActivity extends BaseActivity implements GridView.OnItemClickLi
         assert swingBottomInAnimationAdapter.getViewAnimator() != null;
         swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(INITIAL_DELAY_MILLIS);
         gvDanhMuc.setAdapter(swingBottomInAnimationAdapter);
+        if(mApp.getCurrentVerRun())
+            shareFacebook();
     }
 
     @Override
@@ -225,85 +230,89 @@ public class MainActivity extends BaseActivity implements GridView.OnItemClickLi
         //100002994386631
 
         Bundle params = new Bundle();
-        params.putString("message", "Learn English with Effortless English https://play.google.com/store/apps/details?id=com.estorm.effortlessenglish");
-        params.putString("data",
-                "{\"badge_of_awesomeness\":\"1\"," +
-                        "\"social_karma\":\"5\"}");
-
-// Optionally provide a 'to' param to direct the request at a specific user
-// Give the action and object information
-        params.putString("action_type", "send");
-        params.putString("object_id", "1524714071143955");
-
-        WebDialog requestsDialog = (
-                new WebDialog.RequestsDialogBuilder(this,
-                        Session.getActiveSession(),
-                        params)).setOnCompleteListener(new WebDialog.OnCompleteListener() {
-            @Override
-            public void onComplete(Bundle values, FacebookException error) {
-                if (error != null) {
-                    if (error instanceof FacebookOperationCanceledException) {
-                        Toast.makeText(getApplicationContext(),
-                                "Request cancelled",
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getApplicationContext(),
-                                "Network Error",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    final String requestId = values.getString("request");
-                    if (requestId != null) {
-                        Toast.makeText(getApplicationContext(),
-                                "Request sent",
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getApplicationContext(),
-                                "Request cancelled",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        })
-                .build();
-        requestsDialog.show();
+        params.putString("name","Englist Listening A-Z");
+        params.putString("caption", "Learn English with English Listening A-Z");
+        params.putString("picture","http://128.199.69.38/elistenaz/data/image/logo_effortless.png");
+        params.putString("link","https://play.google.com/store/apps/details?id=com.evnblue.englishlisteningaz");
+//        params.putString("data",
+//                "{\"badge_of_awesomeness\":\"1\"," +
+//                        "\"social_karma\":\"5\"}");
+//
+//// Optionally provide a 'to' param to direct the request at a specific user
+//// Give the action and object information
+//        params.putString("action_type", "send");
+//        params.putString("object_id", "1524714071143955");
 //
 //        WebDialog requestsDialog = (
 //                new WebDialog.RequestsDialogBuilder(this,
 //                        Session.getActiveSession(),
-//                        params))
-//                .setOnCompleteListener(new WebDialog.OnCompleteListener() {
-//
-//                    @Override
-//                    public void onComplete(Bundle values,
-//                                           FacebookException error) {
-//                        if (error != null) {
-//                            if (error instanceof FacebookOperationCanceledException) {
-//                                Toast.makeText(getApplicationContext(),
-//                                        "Request cancelled",
-//                                        Toast.LENGTH_SHORT).show();
-//                            } else {
-//                                Toast.makeText(getApplicationContext(),
-//                                        "Network Error",
-//                                        Toast.LENGTH_SHORT).show();
-//                            }
-//                        } else {
-//                            final String requestId = values.getString("request");
-//                            if (requestId != null) {
-//                                Toast.makeText(getApplicationContext(),
-//                                        "Request sent",
-//                                        Toast.LENGTH_SHORT).show();
-//                            } else {
-//                                Toast.makeText(getApplicationContext(),
-//                                        "Request cancelled",
-//                                        Toast.LENGTH_SHORT).show();
-//                            }
-//                        }
+//                        params)).setOnCompleteListener(new WebDialog.OnCompleteListener() {
+//            @Override
+//            public void onComplete(Bundle values, FacebookException error) {
+//                if (error != null) {
+//                    if (error instanceof FacebookOperationCanceledException) {
+//                        Toast.makeText(getApplicationContext(),
+//                                "Request cancelled",
+//                                Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        Toast.makeText(getApplicationContext(),
+//                                "Network Error",
+//                                Toast.LENGTH_SHORT).show();
 //                    }
-//
-//                })
+//                } else {
+//                    final String requestId = values.getString("request");
+//                    if (requestId != null) {
+//                        Toast.makeText(getApplicationContext(),
+//                                "Request sent",
+//                                Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        Toast.makeText(getApplicationContext(),
+//                                "Request cancelled",
+//                                Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//                finish();
+//            }
+//        })
 //                .build();
 //        requestsDialog.show();
+//
+        WebDialog requestsDialog = (
+                new WebDialog.FeedDialogBuilder(this,
+                        Session.getActiveSession(),
+                        params))
+                .setOnCompleteListener(new WebDialog.OnCompleteListener() {
+
+                    @Override
+                    public void onComplete(Bundle values,
+                                           FacebookException error) {
+                        if (error != null) {
+                            if (error instanceof FacebookOperationCanceledException) {
+                                Toast.makeText(getApplicationContext(),
+                                        "Share cancelled",
+                                        Toast.LENGTH_SHORT).show();
+
+                            } else {
+                                Toast.makeText(getApplicationContext(),
+                                        "Network Error",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            final String requestId = values.getString("request");
+                            if (requestId != null) {
+                                Toast.makeText(getApplicationContext(),
+                                        "Share success",
+                                        Toast.LENGTH_SHORT).show();
+                                mApp.setIsShare(true);
+                            } else {
+                                Log.d("",
+                                        "Request cancelled");
+                            }
+                        }
+                    }
+                })
+                .build();
+        requestsDialog.show();
     }
 
     /**
@@ -314,10 +323,15 @@ public class MainActivity extends BaseActivity implements GridView.OnItemClickLi
     @Override
     public void onBackPressed() {
         if (doubleBackToExitPressedOnce) {
-            if(interstitialAd != null && interstitialAd.isLoaded())
-                interstitialAd.show();
-            if(Build.VERSION.SDK_INT < 11)
+            if(new Random().nextBoolean()){
+                if(interstitialAd != null && interstitialAd.isLoaded())
+                    interstitialAd.show();
+            }
+
+            if(Build.VERSION.SDK_INT < 11) {
                 stopService(new Intent(MainActivity.this, PlayerService.class));
+                //finish();
+            }
             finish();
             return;
         }
@@ -331,6 +345,22 @@ public class MainActivity extends BaseActivity implements GridView.OnItemClickLi
                 doubleBackToExitPressedOnce = false;
             }
         }, 2000);
+    }
+
+    private void shareFacebook(){
+        MyAlertDialogFragment dialog = MyAlertDialogFragment.newInstance(MainActivity.this, "Share this app", "Loving the English Listeing A-Z app? Share with friends in Facebook.", "Remind later", "Share", new MyAlertDialogFragment.MyAlertListener() {
+            @Override
+            public void onLeftClick(Dialog dialog) {
+                dialog.dismiss();
+            }
+
+            @Override
+            public void onRightClick(Dialog dialog) {
+                sendRequestDialog(true);
+                dialog.dismiss();
+            }
+        });
+        dialog.show(MainActivity.this.getSupportFragmentManager(), "share fb");
     }
 }
 class DanhMucAdapter extends BaseAdapter{

@@ -5,4 +5,9 @@
     <dimen name="layout_control_height">50dip</dimen>
     <dimen name="layout_control_title">18.0dip</dimen>
     <dimen name="layout_control_menu">14.0dip</dimen>
+
+    <dimen name="text_size_large">22.0sp</dimen>
+    <dimen name="text_size_very_large">15.0sp</dimen>
+    <dimen name="text_size_normal">16.0sp</dimen>
+    <dimen name="text_size_small">12.0sp</dimen>
 </resources>
