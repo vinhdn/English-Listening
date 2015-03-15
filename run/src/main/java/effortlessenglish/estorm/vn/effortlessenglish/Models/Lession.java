@@ -3,12 +3,14 @@ package effortlessenglish.estorm.vn.effortlessenglish.Models;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 import effortlessenglish.estorm.vn.effortlessenglish.Utils.Constants;
 
 /**
  * Created by Vinh on 1/9/15.
  */
-public class Lession extends Menu {
+public class Lession extends Menu implements Serializable {
 
     public boolean isOffline() {
         return isOffline;

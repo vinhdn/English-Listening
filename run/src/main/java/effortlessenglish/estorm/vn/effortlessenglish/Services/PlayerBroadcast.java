@@ -20,6 +20,7 @@ public class PlayerBroadcast extends BroadcastReceiver{
     public static String BR_LOADING = "vn.vinhblue.effortless.LOADING";
     public static String BR_CHANGE_LESSION = "vn.vinhblue.effortless.CHANGELESSION";
     public static String BR_FINISH_DOWNLOAD = "vn.vinhblue.effortless.FINISHDOWNLOAD";
+    public static String BR_FINISH_DOWNLOAD_FAIL = "vn.vinhblue.effortless.FINISHDOWNLOADFAIL";
 
     private BaseActivity activity;
 
@@ -30,6 +31,9 @@ public class PlayerBroadcast extends BroadcastReceiver{
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
+        if(action.equals(BR_FINISH_DOWNLOAD) && !intent.getBooleanExtra("Success",true)){
+            activity.onPlayerChange(BR_FINISH_DOWNLOAD_FAIL);
+        }else
         activity.onPlayerChange(action);
         if(action.equals(BR_PLAY)){
             activity.onPlayerPlay();

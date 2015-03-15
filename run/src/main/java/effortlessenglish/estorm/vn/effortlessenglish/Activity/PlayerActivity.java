@@ -1,7 +1,12 @@
 package effortlessenglish.estorm.vn.effortlessenglish.Activity;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
@@ -15,11 +20,13 @@ import com.viewpagerindicator.CirclePageIndicator;
 import effortlessenglish.estorm.vn.effortlessenglish.Adapters.PlayerViewAdapter;
 import effortlessenglish.estorm.vn.effortlessenglish.Base.BaseActivity;
 import effortlessenglish.estorm.vn.effortlessenglish.R;
+import effortlessenglish.estorm.vn.effortlessenglish.Services.DownloadService;
 import effortlessenglish.estorm.vn.effortlessenglish.Services.PlayerBroadcast;
 import effortlessenglish.estorm.vn.effortlessenglish.Utils.Constants;
 
 public class PlayerActivity extends BaseActivity implements View.OnClickListener{
 
+    private String ACTION_DOWNLOAD = "com.evnlisten.az.download.action.DOWNLOAD";
     ViewPager mPager;
     CirclePageIndicator mIndicator;
     private SeekBar seekBar;
@@ -28,6 +35,7 @@ public class PlayerActivity extends BaseActivity implements View.OnClickListener
     private boolean isCreated = false;
     //Handler object.
     private Handler mHandler = new Handler();
+    private DownloadService mDownloadService;
 
     private int id;
     @Override
@@ -88,23 +96,23 @@ public class PlayerActivity extends BaseActivity implements View.OnClickListener
         if(action.equals(PlayerBroadcast.BR_PLAY)){
             btPlay.setImageResource(R.drawable.btn_playing_pause);
             return;
-        }
+        }else
         if(action.equals(PlayerBroadcast.BR_PAUSE)){
             btPlay.setImageResource(R.drawable.btn_playing_play);
             return;
-        }
+        }else
         if(action.equals(PlayerBroadcast.BR_ERROR)){
             btPlay.setImageResource(R.drawable.btn_playing_play);
             return;
-        }
+        }else
         if(action.equals(PlayerBroadcast.BR_START)){
             return;
-        }
+        }else
         if(action.equals(PlayerBroadcast.BR_STOP)){
             btPlay.setImageResource(R.drawable.btn_playing_play);
             mHandler.removeCallbacks(seekbarUpdateRunnable);
             return;
-        }
+        }else
         if(action.equals(PlayerBroadcast.BR_LOADED)){
             Log.d("Total time: ", getTotalTimePlayer() + "");
             if(service.getCurrentLession().isOffline()){
@@ -114,14 +122,18 @@ public class PlayerActivity extends BaseActivity implements View.OnClickListener
             showProgressDialog(false);
             setSeekbarDuration((int) (getTotalTimePlayer() / 1000));
             return;
-        }
+        }else
         if(action.equals(PlayerBroadcast.BR_LOADING)){
             btPlay.setImageResource(R.drawable.btn_playing_play);
-        }
+        }else
         if(action.equals(PlayerBroadcast.BR_FINISH_DOWNLOAD)){
             btnDownload.setText(getString(R.string.download_offline_ready));
             btnDownload.setClickable(false);
+        }else
+        if(action.equals(PlayerBroadcast.BR_FINISH_DOWNLOAD)){
+            btnDownload.setText(getString(R.string.download_fail));
         }
+
     }
 
     @Override
@@ -137,7 +149,7 @@ public class PlayerActivity extends BaseActivity implements View.OnClickListener
             mPager.setAdapter(new PlayerViewAdapter(getSupportFragmentManager(),service));
             mIndicator.setViewPager(mPager);
             mIndicator.setPageColor(getResources().getColor(R.color.orgrince));
-            mIndicator.setRadius(mIndicator.getRadius() * 1.5f);
+            //mIndicator.setRadius(mIndicator.getRadius() * 1.5f);
             this.setTitleActionBar(service.getCurrentLession().getName());
             if(service.getCurrentLession().isOffline()){
                 btnDownload.setText(getString(R.string.download_offline_ready));
@@ -245,7 +257,10 @@ public class PlayerActivity extends BaseActivity implements View.OnClickListener
             case R.id.lession_download:
                 if(service != null)
                     if(!service.getCurrentLession().isOffline()) {
-                        service.saveOfflineLession();
+                        //service.saveOfflineLession();
+                        Intent intent= new Intent(this, DownloadService.class);
+                        bindService(intent, mConnectionDownload,
+                                Context.BIND_AUTO_CREATE);
                         btnDownload.setText(getString(R.string.downloading));
                         btnDownload.setClickable(false);
                     }
@@ -297,6 +312,24 @@ public class PlayerActivity extends BaseActivity implements View.OnClickListener
         super.finish();
         overridePendingTransition(R.anim.trans_top_in, R.anim.trans_top_out);
     }
+
+    private ServiceConnection mConnectionDownload = new ServiceConnection() {
+
+        public void onServiceConnected(ComponentName className,
+                                       IBinder binder) {
+            DownloadService.DownloadBinder b = (DownloadService.DownloadBinder) binder;
+            mDownloadService = b.getService();
+            if( mDownloadService != null ){
+                mDownloadService.saveOfflineLession(service.getCurrentLession());
+            }else{
+
+            }
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            mDownloadService = null;
+        }
+    };
 }
 
 

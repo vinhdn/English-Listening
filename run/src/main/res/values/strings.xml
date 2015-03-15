@@ -28,5 +28,6 @@
     <string name="title_activity_intro">IntroActivity</string>
     <string name="download_offline">Download for ofline reading</string>
     <string name="download_offline_ready">Already downloaded</string>
+    <string name="download_fail">Failed download, please retry again</string>
     <string name="downloading">Downloading</string>
 </resources>

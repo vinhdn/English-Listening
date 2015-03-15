@@ -46,6 +46,11 @@
         </activity>
 
         <service android:name=".Services.PlayerService" />
+        <service android:name=".Services.DownloadService" >
+            <intent-filter>
+                <action android:name="com.evnlisten.az.download.action.DOWNLOAD"/>
+            </intent-filter>
+        </service>
 
         <activity
             android:name=".Activity.LessionActivity"

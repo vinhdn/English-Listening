@@ -44,6 +44,9 @@ public class PlayerService extends Service implements OnPreparedListener,
         OnCompletionListener, OnErrorListener, OnBufferingUpdateListener, MusicFocusable {
 
     // debug TAG
+
+    private static final int ID_NOTIFI_DOWNLOAD = 111;
+    private static final int ID_NOTIFI_PLAYER = 1;
     private static final String TAG = PlayerService.class.getSimpleName();
     private static PlayerService mInstance = null;
     public MediaPlayer mMediaPlayer;
@@ -122,7 +125,8 @@ public class PlayerService extends Service implements OnPreparedListener,
                 broadCastMusicPause();
             }
             Log.d(TAG, "stop nhe");
-            stopForeground(true);
+            //stopForeground(true);
+            mNotificationManager.cancel(ID_NOTIFI_PLAYER);
             stopSelf();
             return START_STICKY;
         }
@@ -184,7 +188,7 @@ public class PlayerService extends Service implements OnPreparedListener,
 
         Log.d(TAG, what + " " + extra);
         broadCastMusicError();
-        stopForeground(true);
+        //stopForeground(true);
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setWakeMode(getApplicationContext(),
                 PowerManager.PARTIAL_WAKE_LOCK);
@@ -444,7 +448,8 @@ public class PlayerService extends Service implements OnPreparedListener,
             parentName = getCurrentLession().getParent().getName();
         notification.setLatestEventInfo(context, s,
                 parentName, pendingintent);
-        startForeground(1, notification);
+        //startForeground(1, notification);
+        mNotificationManager.notify(ID_NOTIFI_PLAYER,notification);
         Log.d(TAG, "start nhe");
     }
 
@@ -482,7 +487,8 @@ public class PlayerService extends Service implements OnPreparedListener,
             if (mNotificationBuilder != null) {
                 mNotificationBuilder.setContent(mRemoteViews);
                 mNotificationBuilder.setOngoing(true);
-                startForeground(1, mNotificationBuilder.build());
+                //startForeground(1, mNotificationBuilder.build());
+                mNotificationManager.notify(ID_NOTIFI_PLAYER,mNotificationBuilder.build());
                 Log.d(TAG, "start nhe !=1");
             }
 
@@ -497,7 +503,8 @@ public class PlayerService extends Service implements OnPreparedListener,
 
         if (mNotificationBuilder != null) {
             mNotificationBuilder.setContent(mRemoteViews);
-            startForeground(1, mNotificationBuilder.build());
+//            startForeground(1, mNotificationBuilder.build());
+            mNotificationManager.notify(ID_NOTIFI_PLAYER,mNotificationBuilder.build());
             Log.d(TAG, "start nhe for pause");
         }
         return;
@@ -509,7 +516,8 @@ public class PlayerService extends Service implements OnPreparedListener,
                 R.drawable.bt_minibar_pause_nor);
         if (mNotificationBuilder != null) {
             mNotificationBuilder.setContent(mRemoteViews);
-            startForeground(1, mNotificationBuilder.build());
+//            startForeground(1, mNotificationBuilder.build());
+            mNotificationManager.notify(ID_NOTIFI_PLAYER,mNotificationBuilder.build());
             Log.d(TAG, "start nhe for resume");
         }
     }
@@ -617,7 +625,7 @@ public class PlayerService extends Service implements OnPreparedListener,
         Log.d(TAG, "Onplaysong index");
         Constants.indexLession = i;
         if (listLession != null && i < listLession.size() && i >= 0) {
-            stopForeground(true);
+            //stopForeground(true);
             indexSongPlay = i;
             playSong(listLession.get(i));
             broadCastMusicChangeLession();
@@ -832,9 +840,9 @@ public class PlayerService extends Service implements OnPreparedListener,
                         percent = (int) ((lengthCurrent * 100) / lengthFile);
                         if (VERSION.SDK_INT >= 11) {
                             mBuilder.setProgress(100, Math.abs(percent), false);
-                            mNotificationManager.notify(111, mBuilder.build());
+                            mNotificationManager.notify(ID_NOTIFI_DOWNLOAD, mBuilder.build());
                         }else{
-                            notificationNormal("Saving in process - " + percent + "%",getCurrentLession().getName(),2);
+                            notificationNormal("Saving in process - " + percent + "%",getCurrentLession().getName(),ID_NOTIFI_DOWNLOAD);
                         }
                     }
                     fos.write(buffer, 0, len1);
@@ -848,9 +856,9 @@ public class PlayerService extends Service implements OnPreparedListener,
                     mBuilder.setContentText("Download complete")
                             // Removes the progress bar
                             .setProgress(0, 0, false);
-                    mNotificationManager.notify(111, mBuilder.build());
+                    mNotificationManager.notify(ID_NOTIFI_DOWNLOAD, mBuilder.build());
                 }else{
-                    notificationNormal("Download complete!",getCurrentLession().getName(),111);
+                    notificationNormal("Download complete!",getCurrentLession().getName(),ID_NOTIFI_DOWNLOAD);
                 }
             } catch (Exception e) {
                 Log.d("ERROR", e.toString());
@@ -858,9 +866,9 @@ public class PlayerService extends Service implements OnPreparedListener,
                     mBuilder.setContentText("Download error!")
                             // Removes the progress bar
                             .setProgress(0, 0, false);
-                    mNotificationManager.notify(111, mBuilder.build());
+                    mNotificationManager.notify(ID_NOTIFI_DOWNLOAD, mBuilder.build());
                 }else{
-                    notificationNormal("Download error!",getCurrentLession().getName(),111);
+                    notificationNormal("Download error!",getCurrentLession().getName(),ID_NOTIFI_DOWNLOAD);
                 }
             }
         }
@@ -890,9 +898,9 @@ public class PlayerService extends Service implements OnPreparedListener,
                         .setContentText("saving in progress")
                         .setSmallIcon(R.drawable.icon_downloaded);
                 mBuilder.setProgress(100, 0, false);
-                mNotificationManager.notify(111, mBuilder.build());
+                mNotificationManager.notify(ID_NOTIFI_DOWNLOAD, mBuilder.build());
             } else {
-                notificationNormal("saving in progress",getCurrentLession().getName(),111);
+                notificationNormal("saving in progress",getCurrentLession().getName(),ID_NOTIFI_DOWNLOAD);
             }
 
         }
@@ -902,11 +910,13 @@ public class PlayerService extends Service implements OnPreparedListener,
     public void saveOfflineLession() {
         if (this.getCurrentLession() != null) {
             try {
+                Lession cur = this.getCurrentLession();
                 Models model = this.getCurrentLession();
                 while (model != null && model.getId() > 0) {
                     mApp.getLocalStorage().insertModels(model);
                     model = model.getParent();
                 }
+                this.lessionPlaying = cur;
             }catch (Exception ex){
                 ex.printStackTrace();
             }
@@ -937,7 +947,8 @@ public class PlayerService extends Service implements OnPreparedListener,
         notification.contentView = mRemoteViews;
         notification.setLatestEventInfo(context, content,
                 subtitle, pendingintent);
-        startForeground(id,notification);
+//        startForeground(id,notification);
+        mNotificationManager.notify(id,mNotificationBuilder.build());
         Log.d(TAG, "start nhe");
     }
 
