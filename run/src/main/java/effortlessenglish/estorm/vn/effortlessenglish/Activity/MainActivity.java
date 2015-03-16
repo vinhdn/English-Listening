@@ -3,8 +3,11 @@ package effortlessenglish.estorm.vn.effortlessenglish.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +31,9 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import android.content.pm.Signature;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -73,6 +79,7 @@ public class MainActivity extends BaseActivity implements GridView.OnItemClickLi
             }
         });
         interstitialAd.loadAd(new AdRequest.Builder().build());
+
     }
 
     @Override
@@ -108,8 +115,6 @@ public class MainActivity extends BaseActivity implements GridView.OnItemClickLi
         assert swingBottomInAnimationAdapter.getViewAnimator() != null;
         swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(INITIAL_DELAY_MILLIS);
         gvDanhMuc.setAdapter(swingBottomInAnimationAdapter);
-        if(mApp.getCurrentVerRun())
-            shareFacebook();
     }
 
     @Override
@@ -133,10 +138,10 @@ public class MainActivity extends BaseActivity implements GridView.OnItemClickLi
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if(position == 5) {
-            //sendRequestDialog(true);
+            sendRequestDialog(true);
             //login();
-            Intent i = new Intent(MainActivity.this, IntroActivity.class);
-            startActivity(i);
+//            Intent i = new Intent(MainActivity.this, IntroActivity.class);
+//            startActivity(i);
             return;
         }
         Constants.selectedModel = new Danhmuc(position + 1);
@@ -402,17 +407,22 @@ class DanhMucAdapter extends BaseAdapter{
         if(danhmuc.getImage() > 0)
             holder.image.setImageResource(danhmuc.getImage());
         holder.tvTitle.setText(danhmuc.getName());
-        convertView.findViewById(R.id.main_item_introduce).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AboutDialogFragment dialog = AboutDialogFragment.newInstance(
-                        mContext,
-                        R.style.MyDialogTheme,
-                        danhmuc.getName(),
-                        mContext.getString(danhmuc.getIntroduce()));
-                dialog.show();
-            }
-        });
+                if(position >= 5){
+                    ((TextView)convertView.findViewById(R.id.main_item_introduce)).setText("Share");
+                }else {
+                    ((TextView)convertView.findViewById(R.id.main_item_introduce)).setText("Introduce");
+                    convertView.findViewById(R.id.main_item_introduce).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            AboutDialogFragment dialog = AboutDialogFragment.newInstance(
+                                    mContext,
+                                    R.style.MyDialogTheme,
+                                    danhmuc.getName(),
+                                    mContext.getString(danhmuc.getIntroduce()));
+                            dialog.show();
+                        }
+                    });
+                }
         return convertView;
     }
 

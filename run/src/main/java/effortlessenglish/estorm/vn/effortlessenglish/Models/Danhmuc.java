@@ -74,8 +74,8 @@ public class Danhmuc extends Models {
                 setIntroduce(R.string.gioithieupower);
                 break;
             case 6:
-                setName("Instruction English Listening A-Z");
-                setImage(R.drawable.introduceicon);
+                setName("Share English Listening A-Z app");
+                setImage(R.drawable.ic_fb);
                 setIntroduce(R.string.gioithieuchungngan);
                 break;
         }
