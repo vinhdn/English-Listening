@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_activity"
-    tools:context="effortlessenglish.estorm.vn.effortlessenglish.Activity.MainActivity">
+    tools:context="me.vinhdo.effortless.english.Activity.MainActivity">
 
     <GridView
         android:paddingLeft="10dp"

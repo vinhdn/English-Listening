@@ -9,7 +9,7 @@
     >
 
     <fragment
-        android:name="effortlessenglish.estorm.vn.effortlessenglish.Fragments.AdsFragment"
+        android:name="me.vinhdo.effortless.english.Fragments.AdsFragment"
         android:id="@+id/adsFragment"
         android:layout_above="@+id/include_layout_control"
         android:layout_width="match_parent"
